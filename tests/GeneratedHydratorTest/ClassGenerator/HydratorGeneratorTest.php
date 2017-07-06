@@ -20,17 +20,12 @@ declare(strict_types=1);
 
 namespace GeneratedHydratorTest\ClassGenerator;
 
-use CodeGenerationUtils\Visitor\ClassRenamerVisitor;
-use GeneratedHydrator\ClassGenerator\HydratorGenerator;
-use CodeGenerationUtils\Inflector\Util\UniqueIdentifierGenerator;
-use CodeGenerationUtils\GeneratorStrategy\EvaluatingGeneratorStrategy;
+use GeneratedHydrator\Configuration;
+use GeneratedHydrator\Factory\HydratorFactory;
 use GeneratedHydratorTestAsset\BaseClass;
 use GeneratedHydratorTestAsset\ClassWithByRefMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMixedProperties;
-use PhpParser\NodeTraverser;
-use PHPUnit_Framework_TestCase;
-use ReflectionClass;
 use Zend\Hydrator\HydratorInterface;
 
 /**
@@ -41,7 +36,7 @@ use Zend\Hydrator\HydratorInterface;
  *
  * @covers \GeneratedHydrator\ClassGenerator\HydratorGenerator
  */
-class HydratorGeneratorTest extends PHPUnit_Framework_TestCase
+class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getTestedImplementations
@@ -52,16 +47,13 @@ class HydratorGeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function testGeneratesValidCode(string $className)
     {
-        $generator          = new HydratorGenerator();
-        $generatedClassName = UniqueIdentifierGenerator::getIdentifier('HydratorGeneratorTest');
-        $originalClass      = new ReflectionClass($className);
-        $generatorStrategy  = new EvaluatingGeneratorStrategy();
-        $traverser          = new NodeTraverser();
+        $configuration      = new Configuration($className);
+        $factory            = new HydratorFactory($configuration);
+        $generatedClassName = $factory->getHydratorClass();
 
-        $traverser->addVisitor(new ClassRenamerVisitor($originalClass, $generatedClassName));
-        $generatorStrategy->generate($traverser->traverse($generator->generate($originalClass)));
+        $factory->getHydratorClass();
 
-        $generatedReflection = new ReflectionClass($generatedClassName);
+        $generatedReflection = new \ReflectionClass($generatedClassName);
 
         self::assertSame($generatedClassName, $generatedReflection->getName());
 

@@ -45,12 +45,12 @@ $hydratorClass = $config->createFactory()->getHydratorClass();
 $hydrator      = new $hydratorClass();
 $object        = new Example();
 
-var_dump($hydrator->extract($object)); // array('foo' => 1, 'bar' => 2, 'baz' => 3)
+var_dump($hydrator->extract($object)); // ['foo' => 1, 'bar' => 2, 'baz' => 3]
 $hydrator->hydrate(
-    array('foo' => 4, 'bar' => 5, 'baz' => 6),
+    ['foo' => 4, 'bar' => 5, 'baz' => 6],
     $object
 );
-var_dump($hydrator->extract($object)); // array('foo' => 4, 'bar' => 5, 'baz' => 6)
+var_dump($hydrator->extract($object)); // ['foo' => 4, 'bar' => 5, 'baz' => 6]
 ```
 
 ## Performance comparison
@@ -80,20 +80,20 @@ class Example
         $this->foo = $data['foo']; $this->bar = $data['bar']; $this->baz = $data['baz'];
     }
     public function getArrayCopy() {
-        return array('foo' => $this->foo, 'bar' => $this->bar, 'baz' => $this->baz);
+        return ['foo' => $this->foo, 'bar' => $this->bar, 'baz' => $this->baz];
     }
 }
 
 $object        = new Example();
-$data          = array('foo' => 1, 'bar' => 2, 'baz' => 3);
+$data          = ['foo' => 1, 'bar' => 2, 'baz' => 3];
 $config        = new GeneratedHydrator\Configuration('Example');
 $hydratorClass = $config->createFactory()->getHydratorClass();
-$hydrators     = array(
+$hydrators     = [
     new $hydratorClass(),
     new Zend\Hydrator\ClassMethods(),
     new Zend\Hydrator\Reflection(),
     new Zend\Hydrator\ArraySerializable(),
-);
+];
 
 foreach ($hydrators as $hydrator) {
     $start = microtime(true);

@@ -47,7 +47,7 @@ abstract class AbstractHydrationBench
             'foo' => 'some foo string',
             'bar' => 42,
             'baz' => new \DateTime(),
-            'someFooProperty' => array(12, 13, 14),
+            'someFooProperty' => [12, 13, 14],
             'someBarProperty' => 12354.4578,
             'someBazProperty' => new \stdClass(),
         ];

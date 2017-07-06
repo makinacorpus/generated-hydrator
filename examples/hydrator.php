@@ -4,7 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use GeneratedHydrator\Configuration;
 
-class Foo
+class FooBar
 {
     private $foo   = 1;
     protected $bar = 2;
@@ -26,10 +26,10 @@ class Foo
     }
 }
 
-$config        = new Configuration('Foo');
+$config        = new Configuration('FooBar');
 $hydratorClass = $config->createFactory()->getHydratorClass();
 $hydrator      = new $hydratorClass();
-$foo           = new Foo();
+$foo           = new \FooBar();
 
 $data = $hydrator->extract($foo);
 
@@ -39,11 +39,11 @@ echo "bar: " . $data['bar'] . "\n"; // 2
 echo "baz: " . $data['baz'] . "\n"; // 3
 
 $hydrator->hydrate(
-    array(
+    [
          'foo' => 4,
          'bar' => 5,
          'baz' => 6
-    ),
+    ],
     $foo
 );
 

@@ -20,11 +20,7 @@ declare(strict_types=1);
 
 namespace GeneratedHydratorTest;
 
-use CodeGenerationUtils\Autoloader\AutoloaderInterface;
-use CodeGenerationUtils\GeneratorStrategy\GeneratorStrategyInterface;
-use CodeGenerationUtils\Inflector\ClassNameInflectorInterface;
 use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
-use PHPUnit_Framework_TestCase;
 use GeneratedHydrator\Configuration;
 
 /**
@@ -33,7 +29,7 @@ use GeneratedHydrator\Configuration;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @license MIT
  */
-class ConfigurationTest extends PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \GeneratedHydrator\Configuration
@@ -101,37 +97,6 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \GeneratedHydrator\Configuration::getClassNameInflector
-     * @covers \GeneratedHydrator\Configuration::setClassNameInflector
-     */
-    public function testSetGetClassNameInflector()
-    {
-        self::assertInstanceOf(ClassNameInflectorInterface::class, $this->configuration->getClassNameInflector());
-
-        /* @var $inflector ClassNameInflectorInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $inflector = $this->createMock(ClassNameInflectorInterface::class);
-
-        $this->configuration->setClassNameInflector($inflector);
-        self::assertSame($inflector, $this->configuration->getClassNameInflector());
-    }
-
-    /**
-     * @covers \GeneratedHydrator\Configuration::getGeneratorStrategy
-     * @covers \GeneratedHydrator\Configuration::setGeneratorStrategy
-     */
-    public function testSetGetGeneratorStrategy()
-    {
-
-        self::assertInstanceOf(GeneratorStrategyInterface::class, $this->configuration->getGeneratorStrategy());
-
-        /* @var $strategy GeneratorStrategyInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $strategy = $this->createMock(GeneratorStrategyInterface::class);
-
-        $this->configuration->setGeneratorStrategy($strategy);
-        self::assertSame($strategy, $this->configuration->getGeneratorStrategy());
-    }
-
-    /**
      * @covers \GeneratedHydrator\Configuration::getGeneratedClassesTargetDir
      * @covers \GeneratedHydrator\Configuration::setGeneratedClassesTargetDir
      */
@@ -141,21 +106,6 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $this->configuration->setGeneratedClassesTargetDir(__DIR__);
         self::assertSame(__DIR__, $this->configuration->getGeneratedClassesTargetDir());
-    }
-
-    /**
-     * @covers \GeneratedHydrator\Configuration::getGeneratedClassAutoloader
-     * @covers \GeneratedHydrator\Configuration::setGeneratedClassAutoloader
-     */
-    public function testSetGetGeneratedClassAutoloader()
-    {
-        self::assertInstanceOf(AutoloaderInterface::class, $this->configuration->getGeneratedClassAutoloader());
-
-        /* @var $autoloader AutoloaderInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $autoloader = $this->createMock(AutoloaderInterface::class);
-
-        $this->configuration->setGeneratedClassAutoloader($autoloader);
-        self::assertSame($autoloader, $this->configuration->getGeneratedClassAutoloader());
     }
 
     /**

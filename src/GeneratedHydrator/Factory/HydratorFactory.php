@@ -20,10 +20,7 @@ declare(strict_types=1);
 
 namespace GeneratedHydrator\Factory;
 
-use CodeGenerationUtils\Visitor\ClassRenamerVisitor;
 use GeneratedHydrator\Configuration;
-use PhpParser\NodeTraverser;
-use ReflectionClass;
 
 /**
  * Factory responsible of producing hydrators
@@ -47,30 +44,67 @@ class HydratorFactory
     }
 
     /**
+     * Generate class name from parent class name
+     *
+     * @param string $userClassName
+     *
+     * @return string
+     */
+    private function generateClassName(string $userClassName) : string
+    {
+        return $this->configuration->getGeneratedClassesNamespace() . "\\G" . sha1($userClassName);
+    }
+
+    /**
+     * Write PHP file
+     *
+     * @param string $filename
+     * @param string $content
+     */
+    private function writeFile(string $filename, string $content)
+    {
+        $directory = dirname($filename);
+        if (!is_writable($directory)) {
+            throw new \RuntimeException(sprintf('Cache directory "%s" is not writable.', $directory));
+        }
+
+        $tmpFile = tempnam($directory, basename($filename));
+
+        if (false === @file_put_contents($tmpFile, $content)) {
+            throw new \RuntimeException(sprintf('Could not write file "%s".', $tmpFile));
+        }
+        if (!@rename($tmpFile, $filename)) {
+            throw new \RuntimeException(sprintf('Could not write file "%s".', $filename));
+        }
+        @chmod($filename, 0666 & ~umask());
+    }
+
+    /**
      * Retrieves the generated hydrator FQCN
      *
      * @return string
-     *
-     * @throws \CodeGenerationUtils\Exception\InvalidGeneratedClassesDirectoryException
      */
     public function getHydratorClass() : string
     {
-        $inflector         = $this->configuration->getClassNameInflector();
-        $realClassName     = $inflector->getUserClassName($this->configuration->getHydratedClassName());
-        $hydratorClassName = $inflector->getGeneratedClassName($realClassName, array('factory' => get_class($this)));
+        $originalClassName = $this->configuration->getHydratedClassName();
+        $realClassName = $this->generateClassName($originalClassName);
 
-        if (! class_exists($hydratorClassName) && $this->configuration->doesAutoGenerateProxies()) {
-            $generator     = $this->configuration->getHydratorGenerator();
-            $originalClass = new ReflectionClass($realClassName);
-            $generatedAst   = $generator->generate($originalClass);
-            $traverser      = new NodeTraverser();
+        if (!class_exists($realClassName)) {
 
-            $traverser->addVisitor(new ClassRenamerVisitor($originalClass, $hydratorClassName));
+            $directory = $directory = $this->configuration->getGeneratedClassesTargetDir();
+            $targetFile = $directory . '/' . str_replace("\\", "_", $realClassName) . '.php';
 
-            $this->configuration->getGeneratorStrategy()->generate($traverser->traverse($generatedAst));
-            $this->configuration->getGeneratedClassAutoloader()->__invoke($hydratorClassName);
+            if (@include_once $targetFile) {
+                return $realClassName;
+            }
+
+            $generator = $this->configuration->getHydratorGenerator();
+            $phpClassCode = $generator->generate(new \ReflectionClass($originalClassName), $realClassName, $originalClassName);
+            $this->writeFile($targetFile, $phpClassCode);
+
+            require_once $targetFile;
         }
 
-        return $hydratorClassName;
+        return $realClassName;
     }
 }

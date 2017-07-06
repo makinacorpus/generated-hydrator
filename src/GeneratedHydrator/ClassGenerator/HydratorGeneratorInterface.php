@@ -18,8 +18,6 @@
 
 namespace GeneratedHydrator\ClassGenerator;
 
-use ReflectionClass;
-
 /**
  * Interface for the hydrator generator
  *
@@ -29,11 +27,14 @@ use ReflectionClass;
 interface HydratorGeneratorInterface
 {
     /**
-     * Generates an AST of {@see \PhpParser\Node[]} out of a given reflection class
+     * Generates an implementation of Zend\Hydrator\HydratorInterface class for
+     * the given target class, as a valid PHP code string
      *
      * @param \ReflectionClass $originalClass
+     * @param string $realClassName
+     * @param string $originalClassName
      *
-     * @return \PhpParser\Node[]
+     * @return string
      */
-    public function generate(ReflectionClass $originalClass);
+    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string;
 }

@@ -17,7 +17,7 @@ class InheritanceClassHydrationBench extends AbstractHydrationBench
             'foo1' => 'some foo string',
             'bar1' => 42,
             'baz1' => new \DateTime(),
-            'someFooProperty1' => array(12, 13, 14),
+            'someFooProperty1' => [12, 13, 14],
             'someBarProperty1' => 12354.4578,
             'someBazProperty1' => new \stdClass(),
         ];

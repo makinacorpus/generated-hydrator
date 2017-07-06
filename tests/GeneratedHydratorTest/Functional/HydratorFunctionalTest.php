@@ -20,24 +20,18 @@ declare(strict_types=1);
 
 namespace GeneratedHydratorTest\Functional;
 
-use CodeGenerationUtils\GeneratorStrategy\EvaluatingGeneratorStrategy;
-use CodeGenerationUtils\Inflector\ClassNameInflectorInterface;
-use CodeGenerationUtils\Inflector\Util\UniqueIdentifierGenerator;
 use GeneratedHydrator\Configuration;
 use GeneratedHydratorTestAsset\BaseClass;
 use GeneratedHydratorTestAsset\ClassWithMixedProperties;
 use GeneratedHydratorTestAsset\ClassWithPrivateProperties;
 use GeneratedHydratorTestAsset\ClassWithPrivatePropertiesAndParent;
+use GeneratedHydratorTestAsset\ClassWithPrivatePropertiesAndParents;
 use GeneratedHydratorTestAsset\ClassWithProtectedProperties;
 use GeneratedHydratorTestAsset\ClassWithPublicProperties;
 use GeneratedHydratorTestAsset\ClassWithStaticProperties;
 use GeneratedHydratorTestAsset\EmptyClass;
 use GeneratedHydratorTestAsset\HydratedObject;
-use PHPUnit_Framework_TestCase;
-use ReflectionClass;
-use stdClass;
 use Zend\Hydrator\HydratorInterface;
-use GeneratedHydratorTestAsset\ClassWithPrivatePropertiesAndParents;
 
 /**
  * Tests for {@see \GeneratedHydrator\ClassGenerator\HydratorGenerator} produced objects
@@ -47,7 +41,7 @@ use GeneratedHydratorTestAsset\ClassWithPrivatePropertiesAndParents;
  *
  * @group Functional
  */
-class HydratorFunctionalTest extends PHPUnit_Framework_TestCase
+class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getHydratorClasses
@@ -56,9 +50,9 @@ class HydratorFunctionalTest extends PHPUnit_Framework_TestCase
      */
     public function testHydrator($instance)
     {
-        $reflection  = new ReflectionClass($instance);
-        $initialData = array();
-        $newData     = array();
+        $reflection  = new \ReflectionClass($instance);
+        $initialData = [];
+        $newData     = [];
 
         $this->recursiveFindInitialData($reflection, $instance, $initialData, $newData);
 
@@ -74,7 +68,7 @@ class HydratorFunctionalTest extends PHPUnit_Framework_TestCase
         self::assertSame($instance, $generatedClass->hydrate($newData, $instance));
 
         // Same as upper applies
-        $inspectionData = array();
+        $inspectionData = [];
         $this->recursiveFindInspectionData($reflection, $instance, $inspectionData);
         ksort($inspectionData);
         $extracted = $generatedClass->extract($instance);
@@ -90,7 +84,7 @@ class HydratorFunctionalTest extends PHPUnit_Framework_TestCase
     public function getHydratorClasses() : array
     {
         return [
-            [new stdClass()],
+            [new \stdClass()],
             [new EmptyClass()],
             [new HydratedObject()],
             [new BaseClass()],
@@ -175,26 +169,8 @@ class HydratorFunctionalTest extends PHPUnit_Framework_TestCase
     private function generateHydrator($instance) : HydratorInterface
     {
         $parentClassName    = get_class($instance);
-        $generatedClassName = __NAMESPACE__ . '\\' . UniqueIdentifierGenerator::getIdentifier('Foo');
         $config             = new Configuration($parentClassName);
-        /* @var $inflector ClassNameInflectorInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $inflector          = $this->createMock(ClassNameInflectorInterface::class);
-
-        $inflector
-            ->expects(self::any())
-            ->method('getGeneratedClassName')
-            ->with($parentClassName)
-            ->will(self::returnValue($generatedClassName));
-        $inflector
-            ->expects(self::any())
-            ->method('getUserClassName')
-            ->with($parentClassName)
-            ->will(self::returnValue($parentClassName));
-
-        $config->setClassNameInflector($inflector);
-        $config->setGeneratorStrategy(new EvaluatingGeneratorStrategy());
-
-        $generatedClass = $config->createFactory()->getHydratorClass();
+        $generatedClass     = $config->createFactory()->getHydratorClass($parentClassName);
 
         return new $generatedClass;
     }
