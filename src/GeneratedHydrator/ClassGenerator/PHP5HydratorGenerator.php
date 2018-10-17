@@ -134,7 +134,7 @@ EOT;
             // Hydrate closures
             $content[] = "\$this->hydrateCallbacks[] = \\Closure::bind(function (\$object, \$values) {";
             foreach ($propertyNames as $propertyName) {
-                $content[] = "    if (isset(\$values['" . $propertyName . "'])) {";
+                $content[] = "    if (isset(\$values['" . $propertyName . "']) || \$object->" . $propertyName . " !== null && \\array_key_exists('" . $propertyName . "', \$values)) {";
                 $content[] = "        \$object->" . $propertyName . " = \$values['" . $propertyName . "'];";
                 $content[] = "    }";
             }
@@ -168,7 +168,7 @@ EOT;
         $content = [];
 
         foreach ($visiblePropertyMap as $propertyName) {
-            $content[] = "if (isset(\$data['" . $propertyName . "'])) {";
+            $content[] = "if (isset(\$data['" . $propertyName . "']) || \$object->" . $propertyName . " !== null && \\array_key_exists('" . $propertyName . "', \$data)) {";
             $content[] = "    \$object->" . $propertyName . " = \$data['" . $propertyName . "'];";
             $content[] = "}";
         }
