@@ -40,9 +40,9 @@ class PHP5HydratorGenerator implements HydratorGeneratorInterface
      */
     public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string
     {
-        $position = strrpos($realClassName, '\\');
-        $namespace = substr($realClassName, 0, $position);
-        $className = substr($realClassName, $position + 1);
+        $position = \strrpos($realClassName, '\\');
+        $namespace = \substr($realClassName, 0, $position);
+        $className = \substr($realClassName, $position + 1);
 
         $visiblePropertyMap = [];
         $hiddenPropertyMap = [];
@@ -104,9 +104,9 @@ EOT;
             return [];
         }
 
-        return array_values(array_merge(
+        return \array_values(\array_merge(
             $this->findAllInstanceProperties($class->getParentClass() ?: null), // of course PHP is shit.
-            array_values(array_filter(
+            \array_values(\array_filter(
                 $class->getProperties(),
                 function (\ReflectionProperty $property) : bool {
                     return ! $property->isStatic();
@@ -138,17 +138,17 @@ EOT;
                 $content[] = "        \$object->" . $propertyName . " = \$values['" . $propertyName . "'];";
                 $content[] = "    }";
             }
-            $content[] = '}, null, ' . var_export($className, true) . ');' . "\n";
+            $content[] = '}, null, ' . \var_export($className, true) . ');' . "\n";
 
             // Extract closures
             $content[] = "\$this->extractCallbacks[] = \\Closure::bind(function (\$object, &\$values) {";
             foreach ($propertyNames as $propertyName) {
                 $content[] = "    \$values['" . $propertyName . "'] = \$object->" . $propertyName . ";";
             }
-            $content[] = '}, null, ' . var_export($className, true) . ');' . "\n";
+            $content[] = '}, null, ' . \var_export($className, true) . ');' . "\n";
         }
 
-        return implode("\n", array_map(
+        return \implode("\n", \array_map(
             function ($line) {
                 return "        " . $line;
             }, $content
@@ -179,7 +179,7 @@ EOT;
 
         $content[] = "return \$object;";
 
-        return implode("\n", array_map(
+        return \implode("\n", \array_map(
             function ($line) {
                 return "        " . $line;
             }, $content
@@ -209,7 +209,7 @@ EOT;
 
         $content[] = "return \$ret;";
 
-        return implode("\n", array_map(
+        return \implode("\n", \array_map(
             function ($line) {
                 return "        " . $line;
             }, $content

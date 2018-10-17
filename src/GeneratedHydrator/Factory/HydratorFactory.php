@@ -52,7 +52,7 @@ class HydratorFactory
      */
     private function generateClassName(string $userClassName) : string
     {
-        return $this->configuration->getGeneratedClassesNamespace() . "\\G" . sha1($userClassName);
+        return $this->configuration->getGeneratedClassesNamespace() . "\\G" . \sha1($userClassName);
     }
 
     /**
@@ -63,20 +63,20 @@ class HydratorFactory
      */
     private function writeFile(string $filename, string $content)
     {
-        $directory = dirname($filename);
-        if (!is_writable($directory)) {
-            throw new \RuntimeException(sprintf('Cache directory "%s" is not writable.', $directory));
+        $directory = \dirname($filename);
+        if (!\is_writable($directory)) {
+            throw new \RuntimeException(\sprintf('Cache directory "%s" is not writable.', $directory));
         }
 
-        $tmpFile = tempnam($directory, basename($filename));
+        $tmpFile = \tempnam($directory, \basename($filename));
 
-        if (false === @file_put_contents($tmpFile, $content)) {
-            throw new \RuntimeException(sprintf('Could not write file "%s".', $tmpFile));
+        if (false === @\file_put_contents($tmpFile, $content)) {
+            throw new \RuntimeException(\sprintf('Could not write file "%s".', $tmpFile));
         }
-        if (!@rename($tmpFile, $filename)) {
-            throw new \RuntimeException(sprintf('Could not write file "%s".', $filename));
+        if (!@\rename($tmpFile, $filename)) {
+            throw new \RuntimeException(\sprintf('Could not write file "%s".', $filename));
         }
-        @chmod($filename, 0666 & ~umask());
+        @\chmod($filename, 0666 & ~\umask());
     }
 
     /**
@@ -92,7 +92,7 @@ class HydratorFactory
         if (!class_exists($realClassName)) {
 
             $directory = $directory = $this->configuration->getGeneratedClassesTargetDir();
-            $targetFile = $directory . '/' . str_replace("\\", "_", $realClassName) . '.php';
+            $targetFile = $directory . '/' . \str_replace("\\", "_", $realClassName) . '.php';
 
             if (@include_once $targetFile) {
                 return $realClassName;
