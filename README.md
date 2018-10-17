@@ -22,3 +22,8 @@ Differences are:
 
 Apart from those few differences, generated hydrator code remain the same
 and perform equivalently.
+
+## Version
+
+ * 2.0 branch is for php 5.6 and compatible with with ocramius/generated-hydrator until end of 2018
+ * master as no releases yet, is php 7.2 only.
