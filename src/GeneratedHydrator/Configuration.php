@@ -16,8 +16,6 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types=1);
-
 namespace GeneratedHydrator;
 
 use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
@@ -67,7 +65,7 @@ class Configuration
     /**
      * @param string $hydratedClassName
      */
-    public function __construct(string $hydratedClassName)
+    public function __construct($hydratedClassName)
     {
         $this->setHydratedClassName($hydratedClassName);
     }
@@ -75,7 +73,7 @@ class Configuration
     /**
      * @return \GeneratedHydrator\Factory\HydratorFactory
      */
-    public function createFactory() : HydratorFactory
+    public function createFactory()
     {
         return new HydratorFactory($this);
     }
@@ -83,7 +81,7 @@ class Configuration
     /**
      * @param string $hydratedClassName
      */
-    public function setHydratedClassName(string $hydratedClassName)
+    public function setHydratedClassName($hydratedClassName)
     {
         $this->hydratedClassName = $hydratedClassName;
     }
@@ -91,7 +89,7 @@ class Configuration
     /**
      * @return string
      */
-    public function getHydratedClassName() : string
+    public function getHydratedClassName()
     {
         return $this->hydratedClassName;
     }
@@ -99,7 +97,7 @@ class Configuration
     /**
      * @param bool $autoGenerateProxies
      */
-    public function setAutoGenerateProxies(bool $autoGenerateProxies)
+    public function setAutoGenerateProxies($autoGenerateProxies)
     {
         $this->autoGenerateProxies = $autoGenerateProxies;
     }
@@ -107,7 +105,7 @@ class Configuration
     /**
      * @return bool
      */
-    public function doesAutoGenerateProxies() : bool
+    public function doesAutoGenerateProxies()
     {
         return $this->autoGenerateProxies;
     }
@@ -115,7 +113,7 @@ class Configuration
     /**
      * @param string $generatedClassesNamespace
      */
-    public function setGeneratedClassesNamespace(string $generatedClassesNamespace)
+    public function setGeneratedClassesNamespace($generatedClassesNamespace)
     {
         $this->generatedClassesNamespace = $generatedClassesNamespace;
     }
@@ -123,7 +121,7 @@ class Configuration
     /**
      * @return string
      */
-    public function getGeneratedClassesNamespace() : string
+    public function getGeneratedClassesNamespace()
     {
         return $this->generatedClassesNamespace;
     }
@@ -131,7 +129,7 @@ class Configuration
     /**
      * @param string $generatedClassesTargetDir
      */
-    public function setGeneratedClassesTargetDir(string $generatedClassesTargetDir)
+    public function setGeneratedClassesTargetDir($generatedClassesTargetDir)
     {
         $this->generatedClassesTargetDir = $generatedClassesTargetDir;
     }

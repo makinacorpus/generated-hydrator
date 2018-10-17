@@ -16,12 +16,10 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types=1);
-
 namespace GeneratedHydratorTest;
 
-use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
 use GeneratedHydrator\Configuration;
+use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
 
 /**
  * Tests for {@see \GeneratedHydrator\Configuration}

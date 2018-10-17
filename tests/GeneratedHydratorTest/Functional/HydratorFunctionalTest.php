@@ -16,8 +16,6 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types=1);
-
 namespace GeneratedHydratorTest\Functional;
 
 use GeneratedHydrator\Configuration;
@@ -31,7 +29,6 @@ use GeneratedHydratorTestAsset\ClassWithPublicProperties;
 use GeneratedHydratorTestAsset\ClassWithStaticProperties;
 use GeneratedHydratorTestAsset\EmptyClass;
 use GeneratedHydratorTestAsset\HydratedObject;
-use Zend\Hydrator\HydratorInterface;
 
 /**
  * Tests for {@see \GeneratedHydrator\ClassGenerator\HydratorGenerator} produced objects
@@ -92,7 +89,7 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getHydratorClasses() : array
+    public function getHydratorClasses()
     {
         return [
             [new \stdClass()],
@@ -175,9 +172,9 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
      *
      * @param object $instance
      *
-     * @return HydratorInterface
+     * @return \Zend\Hydrator\HydratorInterface
      */
-    private function generateHydrator($instance) : HydratorInterface
+    private function generateHydrator($instance)
     {
         $parentClassName    = get_class($instance);
         $config             = new Configuration($parentClassName);

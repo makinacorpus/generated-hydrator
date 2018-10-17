@@ -16,8 +16,6 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types=1);
-
 namespace GeneratedHydrator\ClassGenerator;
 
 /**
@@ -38,7 +36,7 @@ class PHP5HydratorGenerator implements HydratorGeneratorInterface
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string
+    public function generate(\ReflectionClass $originalClass, $realClassName, $originalClassName)
     {
         $position = \strrpos($realClassName, '\\');
         $namespace = \substr($realClassName, 0, $position);
@@ -108,7 +106,7 @@ EOT;
             $this->findAllInstanceProperties($class->getParentClass() ?: null), // of course PHP is shit.
             \array_values(\array_filter(
                 $class->getProperties(),
-                function (\ReflectionProperty $property) : bool {
+                function (\ReflectionProperty $property) {
                     return ! $property->isStatic();
                 }
             ))
@@ -123,7 +121,7 @@ EOT;
      *
      * @return string
      */
-    private function createContructor(array $visiblePropertyMap, array $hiddenPropertyMap) : string
+    private function createContructor(array $visiblePropertyMap, array $hiddenPropertyMap)
     {
         $content = [];
 
@@ -163,7 +161,7 @@ EOT;
      *
      * @return string
      */
-    private function createHydrateMethod(array $visiblePropertyMap, array $hiddenPropertyMap) : string
+    private function createHydrateMethod(array $visiblePropertyMap, array $hiddenPropertyMap)
     {
         $content = [];
 
@@ -194,7 +192,7 @@ EOT;
      *
      * @return string
      */
-    private function createExtractMethod(array $visiblePropertyMap, array $hiddenPropertyMap) : string
+    private function createExtractMethod(array $visiblePropertyMap, array $hiddenPropertyMap)
     {
         $content = [];
 

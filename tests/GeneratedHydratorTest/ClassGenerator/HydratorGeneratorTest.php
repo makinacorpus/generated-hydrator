@@ -16,16 +16,14 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types=1);
-
 namespace GeneratedHydratorTest\ClassGenerator;
 
 use GeneratedHydrator\Configuration;
-use GeneratedHydrator\Factory\HydratorFactory;
 use GeneratedHydratorTestAsset\BaseClass;
 use GeneratedHydratorTestAsset\ClassWithByRefMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMixedProperties;
+use GeneratedHydrator\Factory\HydratorFactory;
 use Zend\Hydrator\HydratorInterface;
 
 /**
@@ -45,7 +43,7 @@ class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $className
      */
-    public function testGeneratesValidCode(string $className)
+    public function testGeneratesValidCode($className)
     {
         $configuration      = new Configuration($className);
         $factory            = new HydratorFactory($configuration);
@@ -65,7 +63,7 @@ class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getTestedImplementations() : array
+    public function getTestedImplementations()
     {
         return [
             [BaseClass::class],
@@ -78,7 +76,7 @@ class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExpectedImplementedInterfaces() : array
+    protected function getExpectedImplementedInterfaces()
     {
         return [HydratorInterface::class];
     }
