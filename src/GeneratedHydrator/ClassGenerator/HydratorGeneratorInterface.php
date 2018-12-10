@@ -36,5 +36,5 @@ interface HydratorGeneratorInterface
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName);
+    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string;
 }

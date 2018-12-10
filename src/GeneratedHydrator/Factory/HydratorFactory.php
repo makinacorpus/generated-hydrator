@@ -50,7 +50,7 @@ class HydratorFactory
      *
      * @return string
      */
-    private function generateClassName(string $userClassName)
+    private function generateClassName(string $userClassName) : string
     {
         return $this->configuration->getGeneratedClassesNamespace() . "\\G" . \sha1($userClassName);
     }
@@ -84,7 +84,7 @@ class HydratorFactory
      *
      * @return string
      */
-    public function getHydratorClass()
+    public function getHydratorClass() : string
     {
         $originalClassName = $this->configuration->getHydratedClassName();
         $realClassName = $this->generateClassName($originalClassName);

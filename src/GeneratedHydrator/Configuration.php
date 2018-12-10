@@ -75,7 +75,7 @@ class Configuration
     /**
      * @return \GeneratedHydrator\Factory\HydratorFactory
      */
-    public function createFactory()
+    public function createFactory() : HydratorFactory
     {
         return new HydratorFactory($this);
     }
@@ -91,7 +91,7 @@ class Configuration
     /**
      * @return string
      */
-    public function getHydratedClassName()
+    public function getHydratedClassName() : string
     {
         return $this->hydratedClassName;
     }
@@ -107,7 +107,7 @@ class Configuration
     /**
      * @return bool
      */
-    public function doesAutoGenerateProxies()
+    public function doesAutoGenerateProxies() : bool
     {
         return $this->autoGenerateProxies;
     }
@@ -123,7 +123,7 @@ class Configuration
     /**
      * @return string
      */
-    public function getGeneratedClassesNamespace()
+    public function getGeneratedClassesNamespace() : string
     {
         return $this->generatedClassesNamespace;
     }
