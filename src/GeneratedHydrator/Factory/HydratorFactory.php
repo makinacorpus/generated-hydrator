@@ -48,7 +48,7 @@ class HydratorFactory
      *
      * @return string
      */
-    private function generateClassName(string $userClassName)
+    private function generateClassName($userClassName)
     {
         return $this->configuration->getGeneratedClassesNamespace() . "\\G" . \sha1($userClassName);
     }
@@ -59,7 +59,7 @@ class HydratorFactory
      * @param string $filename
      * @param string $content
      */
-    private function writeFile(string $filename, string $content)
+    private function writeFile($filename, $content)
     {
         $directory = \dirname($filename);
         if (!\is_writable($directory)) {
