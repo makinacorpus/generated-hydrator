@@ -101,7 +101,8 @@ class HydratorFactory
 
             $targetFile = $namingStrategy->generateFilename(
                 $realClassName,
-                $this->configuration->getGeneratedClassesTargetDir()
+                $this->configuration->getGeneratedClassesTargetDir(),
+                $this->configuration->getNamespacePrefix()
             );
 
             $this->ensureDirectory(\dirname($targetFile));
