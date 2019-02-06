@@ -20,6 +20,8 @@ namespace GeneratedHydratorTest;
 
 use GeneratedHydrator\Configuration;
 use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
+use GeneratedHydrator\Strategy\HashNamingStrategy;
+use GeneratedHydrator\Strategy\ClassNamingStrategy;
 
 /**
  * Tests for {@see \GeneratedHydrator\Configuration}
@@ -61,6 +63,30 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testCreateFactory()
     {
         self::assertInstanceOf('GeneratedHydrator\\Factory\\HydratorFactory', $this->configuration->createFactory());
+    }
+
+    /**
+     * @covers \GeneratedHydrator\Configuration::setNamespacePrefix
+     * @covers \GeneratedHydrator\Configuration::getNamespacePrefix
+     */
+    public function testGetSetNamespacePrefix()
+    {
+        self::assertNull($this->configuration->getNamespacePrefix());
+
+        $this->configuration->setNamespacePrefix('My\\App\\');
+        self::assertSame('My\\App\\', $this->configuration->getNamespacePrefix());
+    }
+
+    /**
+     * @covers \GeneratedHydrator\Configuration::setNamingStrategy
+     * @covers \GeneratedHydrator\Configuration::getNamingStrategy
+     */
+    public function testGetSetNamingStrategy()
+    {
+        self::assertInstanceOf(HashNamingStrategy::class, $this->configuration->getNamingStrategy());
+
+        $this->configuration->setNamingStrategy(new ClassNamingStrategy());
+        self::assertInstanceOf(ClassNamingStrategy::class, $this->configuration->getNamingStrategy());
     }
 
     /**

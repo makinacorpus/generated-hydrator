@@ -24,13 +24,11 @@ use GeneratedHydrator\Configuration;
  * Factory responsible of producing hydrators
  *
  * @author Marco Pivetta <ocramius@gmail.com>
+ * @author Pierre Rineau <pierre.rineau@processus.org>
  * @license MIT
  */
 class HydratorFactory
 {
-    /**
-     * @var \GeneratedHydrator\Configuration
-     */
     private $configuration;
 
     /**
@@ -42,15 +40,22 @@ class HydratorFactory
     }
 
     /**
-     * Generate class name from parent class name
+     * Ensure target directory exists
      *
-     * @param string $userClassName
+     * @param ?string $directory
      *
      * @return string
      */
-    private function generateClassName($userClassName)
+    private function ensureDirectory($directory = null)
     {
-        return $this->configuration->getGeneratedClassesNamespace() . "\\G" . \sha1($userClassName);
+        if (!$directory) {
+            $directory = \sys_get_temp_dir().'/goat-hydrator';
+        }
+        if (!\is_dir($directory) && !@\mkdir($directory)) { // Attempt directory creation
+            throw new \InvalidArgumentException(\sprintf("'%s': could not create directory", $directory));
+        }
+
+        return $directory;
     }
 
     /**
@@ -63,7 +68,7 @@ class HydratorFactory
     {
         $directory = \dirname($filename);
         if (!\is_writable($directory)) {
-            throw new \RuntimeException(\sprintf('Cache directory "%s" is not writable.', $directory));
+            throw new \RuntimeException(\sprintf('Target directory "%s" is not writable.', $directory));
         }
 
         $tmpFile = \tempnam($directory, \basename($filename));
@@ -85,12 +90,21 @@ class HydratorFactory
     public function getHydratorClass()
     {
         $originalClassName = $this->configuration->getHydratedClassName();
-        $realClassName = $this->generateClassName($originalClassName);
+        $namingStrategy = $this->configuration->getNamingStrategy();
+
+        $realClassName = $namingStrategy->generateClassName(
+            $originalClassName,
+            $this->configuration->getGeneratedClassesNamespace()
+        );
 
         if (!class_exists($realClassName)) {
 
-            $directory = $directory = $this->configuration->getGeneratedClassesTargetDir();
-            $targetFile = $directory . '/' . \str_replace("\\", "_", $realClassName) . '.php';
+            $targetFile = $namingStrategy->generateFilename(
+                $realClassName,
+                $this->configuration->getGeneratedClassesTargetDir()
+            );
+
+            $this->ensureDirectory(\dirname($targetFile));
 
             if (@include_once $targetFile) {
                 return $realClassName;

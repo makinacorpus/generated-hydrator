@@ -21,6 +21,8 @@ namespace GeneratedHydrator;
 use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
 use GeneratedHydrator\ClassGenerator\PHP5HydratorGenerator;
 use GeneratedHydrator\Factory\HydratorFactory;
+use GeneratedHydrator\Strategy\HashNamingStrategy;
+use GeneratedHydrator\Strategy\NamingStrategy;
 
 /**
  * Base configuration class for the generated hydrator - serves as micro disposable DIC/facade
@@ -28,39 +30,19 @@ use GeneratedHydrator\Factory\HydratorFactory;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @license MIT
  */
-class Configuration
+final class Configuration
 {
     const DEFAULT_GENERATED_CLASS_NAMESPACE = 'GeneratedHydratorGeneratedClass';
+    const DEFAULT_GENERATED_NAME_STRATEGY = 'hash';
 
-    /**
-     * @var string
-     */
-    protected $hydratedClassName;
-
-    /**
-     * @var bool
-     */
-    protected $autoGenerateProxies = true;
-
-    /**
-     * @var string|null
-     */
-    protected $generatedClassesTargetDir;
-
-    /**
-     * @var string
-     */
-    protected $generatedClassesNamespace = self::DEFAULT_GENERATED_CLASS_NAMESPACE;
-
-    /**
-     * @var callable|null
-     */
-    protected $generatedClassesAutoloader;
-
-    /**
-     * @var \GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface|null
-     */
-    protected $hydratorGenerator;
+    private $autoGenerateProxies = true;
+    private $generatedClassesAutoloader;
+    private $generatedClassesNamespace = self::DEFAULT_GENERATED_CLASS_NAMESPACE;
+    private $generatedClassesTargetDir;
+    private $hydratedClassName;
+    private $hydratorGenerator;
+    private $namespacePrefix;
+    private $namingStrategy;
 
     /**
      * @param string $hydratedClassName
@@ -76,6 +58,42 @@ class Configuration
     public function createFactory()
     {
         return new HydratorFactory($this);
+    }
+
+    /**
+     * @param string $namespacePrefix
+     */
+    public function setNamespacePrefix($namespacePrefix)
+    {
+        $this->namespacePrefix = $namespacePrefix;
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getNamespacePrefix()
+    {
+        return $this->namespacePrefix;
+    }
+
+    /**
+     * @param \GeneratedHydrator\Strategy\NamingStrategy $namingStrategy
+     */
+    public function setNamingStrategy(NamingStrategy $namingStrategy)
+    {
+        $this->namingStrategy = $namingStrategy;
+    }
+
+    /**
+     * @return \GeneratedHydrator\Strategy\NamingStrategy
+     */
+    public function getNamingStrategy()
+    {
+        if (null === $this->namingStrategy) {
+            $this->namingStrategy = new HashNamingStrategy();
+        }
+
+        return $this->namingStrategy;
     }
 
     /**
