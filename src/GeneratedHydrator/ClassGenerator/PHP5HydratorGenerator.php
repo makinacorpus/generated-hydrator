@@ -72,17 +72,17 @@ class {$className} implements HydratorInterface
 
     public function __construct()
     {
-        {$this->createContructor($visiblePropertyMap, $hiddenPropertyMap)}
+{$this->createContructor($visiblePropertyMap, $hiddenPropertyMap)}
     }
 
     public function hydrate(array \$data, \$object)
     {
-        {$this->createHydrateMethod($visiblePropertyMap, $hiddenPropertyMap)}
+{$this->createHydrateMethod($visiblePropertyMap, $hiddenPropertyMap)}
     }
 
     public function extract(\$object)
     {
-        {$this->createExtractMethod($visiblePropertyMap, $hiddenPropertyMap)}
+{$this->createExtractMethod($visiblePropertyMap, $hiddenPropertyMap)}
     }
 }
 EOT;
