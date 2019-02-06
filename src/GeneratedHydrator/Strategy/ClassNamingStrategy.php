@@ -2,8 +2,6 @@
 
 namespace GeneratedHydrator\Strategy;
 
-use GeneratedHydrator\Configuration;
-
 /**
  * Uses the user class name suffixed using "Hydrator".
  *

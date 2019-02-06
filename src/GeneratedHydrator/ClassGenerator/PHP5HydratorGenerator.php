@@ -63,9 +63,11 @@ namespace {$namespace};
 use Zend\Hydrator\HydratorInterface;
 
 /**
- * This is a generated hydrator for the {$originalClassName} class
+ * This is a generated hydrator for the {$originalClassName} class.
+ *
+ * Delete this file to force is regeneration upon next hydrator call.
  */
-class {$className} implements HydratorInterface
+final class {$className} implements HydratorInterface
 {
     private \$hydrateCallbacks = [];
     private \$extractCallbacks = [];
