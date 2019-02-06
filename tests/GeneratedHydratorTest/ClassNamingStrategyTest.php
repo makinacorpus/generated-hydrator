@@ -33,34 +33,20 @@ class ClassNamingStrategyTest extends \PHPUnit_Framework_TestCase
         $strategy = new ClassNamingStrategy();
 
         self::assertSame(
-            "Foo\\Bar\\GeneratedHydrator",
+            "App\\Hydrator\\SomeClassHydrator",
             $strategy->generateClassName(
-                '\\App\\Domain\\Generated',
-                '\\Foo\\Bar'
+                'App\\Domain\\Model\\SomeClass',
+                '\\App\\Hydrator'
             )
         );
 
         self::assertSame(
-            "./src/Foo/Bar/GeneratedHydrator.php",
+            "./src/Hydrator/SomeClassHydrator.php",
             $strategy->generateFilename(
-                'Foo\\Bar\\GeneratedHydrator',
-                './src/'
+                'App\\Hydrator\\SomeClassHydrator',
+                './src/',
+                'App\\'
             )
-        );
-
-        self::assertSame(
-            "./src/Bar/GeneratedHydrator.php",
-            $strategy->generateFilename('Foo\\Bar\\GeneratedHydrator', './src/', '\\Foo')
-        );
-
-        self::assertSame(
-            "./src/Bar/GeneratedHydrator.php",
-            $strategy->generateFilename('Foo\\Bar\\GeneratedHydrator', './src/', 'Foo')
-        );
-
-        self::assertSame(
-            "./src/Bar/GeneratedHydrator.php",
-            $strategy->generateFilename('\\Foo\\Bar\\GeneratedHydrator', './src/', '\\Foo\\')
         );
     }
 }

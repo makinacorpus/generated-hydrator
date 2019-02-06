@@ -47,9 +47,11 @@ final class Configuration
     /**
      * @param string $hydratedClassName
      */
-    public function __construct($hydratedClassName)
+    public function __construct($hydratedClassName = null)
     {
-        $this->setHydratedClassName($hydratedClassName);
+        if ($hydratedClassName) {
+            $this->setHydratedClassName($hydratedClassName);
+        }
     }
 
     /**

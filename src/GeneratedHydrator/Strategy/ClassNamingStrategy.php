@@ -2,8 +2,13 @@
 
 namespace GeneratedHydrator\Strategy;
 
+use GeneratedHydrator\Configuration;
+
 /**
  * Uses the user class name suffixed using "Hydrator".
+ *
+ * Warning: this implementation is subject to hydrator class name conflicts.
+ * @todo Find a way.
  *
  * @author Pierre Rineau <pierre.rineau@processus.org>
  * @license MIT
@@ -11,13 +16,27 @@ namespace GeneratedHydrator\Strategy;
 final class ClassNamingStrategy implements NamingStrategy
 {
     /**
+     * Get class name without namespace
+     *
+     * @param string $realClassName
+     *
+     * @return string
+     */
+    private function getRelativeClassName($qualifiedClassName)
+    {
+        if (false !== ($pos = \strrpos($qualifiedClassName, '\\'))) {
+            return \substr($qualifiedClassName, $pos + 1);
+        }
+
+        return $qualifiedClassName;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function generateClassName($userClassName, $generatedClassNamespace)
     {
-        if (false !== ($pos = \strrpos($userClassName, '\\'))) {
-            $userClassName = \substr($userClassName, $pos + 1);
-        }
+        $userClassName = $this->getRelativeClassName($userClassName);
 
         return \ltrim($generatedClassNamespace."\\".$userClassName."Hydrator", '\\');
     }
