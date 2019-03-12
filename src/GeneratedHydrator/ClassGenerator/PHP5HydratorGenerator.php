@@ -132,7 +132,7 @@ EOT;
         // then be called in order in the hydrate() and extract() methods.
         foreach ($hiddenPropertyMap as $className => $propertyNames) {
             // Hydrate closures
-            $content[] = "\$this->hydrateCallbacks[] = \\Closure::bind(function (\$object, \$values) {";
+            $content[] = "\$this->hydrateCallbacks[] = \\Closure::bind(static function (\$object, \$values) {";
             foreach ($propertyNames as $propertyName) {
                 $content[] = "    if (isset(\$values['" . $propertyName . "']) || \$object->" . $propertyName . " !== null && \\array_key_exists('" . $propertyName . "', \$values)) {";
                 $content[] = "        \$object->" . $propertyName . " = \$values['" . $propertyName . "'];";
@@ -141,7 +141,7 @@ EOT;
             $content[] = '}, null, ' . \var_export($className, true) . ');' . "\n";
 
             // Extract closures
-            $content[] = "\$this->extractCallbacks[] = \\Closure::bind(function (\$object, &\$values) {";
+            $content[] = "\$this->extractCallbacks[] = \\Closure::bind(static function (\$object, &\$values) {";
             foreach ($propertyNames as $propertyName) {
                 $content[] = "    \$values['" . $propertyName . "'] = \$object->" . $propertyName . ";";
             }
