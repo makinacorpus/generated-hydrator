@@ -67,26 +67,23 @@ use Zend\Hydrator\HydratorInterface;
 /**
  * This is a generated hydrator for the {$originalClassName} class
  */
-class {$className} implements HydratorInterface
+final class {$className} implements HydratorInterface
 {
-    private \$hydrateCallbacks = [];
-    private \$extractCallbacks = [];
-
-    public function __construct()
-    {
-        {$this->createContructor($visiblePropertyMap, $hiddenPropertyMap)}
-    }
+{$this->createStaticProperties($visiblePropertyMap, $hiddenPropertyMap, $className)}
 
     public function hydrate(array \$data, \$object)
     {
-        {$this->createHydrateMethod($visiblePropertyMap, $hiddenPropertyMap)}
+{$this->createHydrateMethod($visiblePropertyMap, $hiddenPropertyMap, $className)}
     }
 
     public function extract(\$object)
     {
-        {$this->createExtractMethod($visiblePropertyMap, $hiddenPropertyMap)}
+{$this->createExtractMethod($visiblePropertyMap, $hiddenPropertyMap, $className)}
     }
 }
+
+{$this->createCallbackInitialization($visiblePropertyMap, $hiddenPropertyMap, $className)}
+
 EOT;
     }
 
@@ -116,23 +113,52 @@ EOT;
     }
 
     /**
-     * Generate code for the hydrator constructor
-     *
-     * @param string[][] $visiblePropertyMap
-     * @param string[] $hiddenPropertyMap
-     *
-     * @return string
+     * Dump lines with indentation
      */
-    private function createContructor(array $visiblePropertyMap, array $hiddenPropertyMap) : string
+    private function dumpLines(array $lines, int $indent = 4): string
     {
+        return \trim(\implode("\n", \array_map(
+            static function ($line) use ($indent) {
+                return \str_repeat(" ", $indent).$line;
+            }, $lines
+        )), "\n");
+    }
+
+    /**
+     * Generate code for the hydrator constructor
+     */
+    private function createStaticProperties(
+        array $visiblePropertyMap,
+        array $hiddenPropertyMap,
+        string $hydratorClassName
+    ): string {
+        $content = [];
+
+        for ($i = 0; $i < count($hiddenPropertyMap); $i++) {
+            $content[] = "public static \$hydrate".$i.";";
+            $content[] = "public static \$extract".$i.";";
+        }
+
+        return $this->dumpLines($content, 4);
+    }
+
+    /**
+     * Generate code for the hydrator constructor
+     */
+    private function createCallbackInitialization(
+        array $visiblePropertyMap,
+        array $hiddenPropertyMap,
+        string $hydratorClassName
+    ): string {
         $content = [];
 
         // Create a set of closures that will be called to hydrate the object.
         // Array of closures in a naturally indexed array, ordered, which will
         // then be called in order in the hydrate() and extract() methods.
+        $i = 0;
         foreach ($hiddenPropertyMap as $className => $propertyNames) {
             // Hydrate closures
-            $content[] = "\$this->hydrateCallbacks[] = \\Closure::bind(function (\$object, \$values) {";
+            $content[] = $hydratorClassName."::\$hydrate".$i." = \\Closure::bind(static function (\$object, \$values) {";
             foreach ($propertyNames as $propertyName) {
                 $content[] = "    if (isset(\$values['" . $propertyName . "']) || \$object->" . $propertyName . " !== null && \\array_key_exists('" . $propertyName . "', \$values)) {";
                 $content[] = "        \$object->" . $propertyName . " = \$values['" . $propertyName . "'];";
@@ -141,30 +167,25 @@ EOT;
             $content[] = '}, null, ' . \var_export($className, true) . ');' . "\n";
 
             // Extract closures
-            $content[] = "\$this->extractCallbacks[] = \\Closure::bind(function (\$object, &\$values) {";
+            $content[] = $hydratorClassName."::\$extract".$i." = \\Closure::bind(static function (\$object, &\$values) {";
             foreach ($propertyNames as $propertyName) {
                 $content[] = "    \$values['" . $propertyName . "'] = \$object->" . $propertyName . ";";
             }
             $content[] = '}, null, ' . \var_export($className, true) . ');' . "\n";
+            $i++;
         }
 
-        return \implode("\n", \array_map(
-            function ($line) {
-                return "        " . $line;
-            }, $content
-        ));
+        return $this->dumpLines($content, 0);
     }
 
     /**
      * Generate code for the hydrate method
-     *
-     * @param string[][] $visiblePropertyMap
-     * @param string[] $hiddenPropertyMap
-     *
-     * @return string
      */
-    private function createHydrateMethod(array $visiblePropertyMap, array $hiddenPropertyMap) : string
-    {
+    private function createHydrateMethod(
+        array $visiblePropertyMap,
+        array $hiddenPropertyMap,
+        string $hydratorClassName
+    ): string {
         $content = [];
 
         foreach ($visiblePropertyMap as $propertyName) {
@@ -172,47 +193,37 @@ EOT;
             $content[] = "    \$object->" . $propertyName . " = \$data['" . $propertyName . "'];";
             $content[] = "}";
         }
-        $index = 0;
-        foreach ($hiddenPropertyMap as $className => $propertyNames) {
-            $content[] = "\$this->hydrateCallbacks[" . ($index++) . "]->__invoke(\$object, \$data);";
+
+        for ($i = 0; $i < count($hiddenPropertyMap); $i++) {
+            $content[] = "self::\$hydrate".$i."->__invoke(\$object, \$data);";
         }
 
         $content[] = "return \$object;";
 
-        return \implode("\n", \array_map(
-            function ($line) {
-                return "        " . $line;
-            }, $content
-        ));
+        return $this->dumpLines($content, 8);
     }
 
     /**
      * Generate code for the extract method
-     *
-     * @param string[][] $visiblePropertyMap
-     * @param string[] $hiddenPropertyMap
-     *
-     * @return string
      */
-    private function createExtractMethod(array $visiblePropertyMap, array $hiddenPropertyMap) : string
-    {
+    private function createExtractMethod(
+        array $visiblePropertyMap,
+        array $hiddenPropertyMap,
+        string $hydratorClassName
+    ): string {
         $content = [];
 
-        $content[] = "\$ret = array();";
+        $content[] = "\$ret = [];";
         foreach ($visiblePropertyMap as $propertyName) {
             $content[] = "\$ret['" . $propertyName . "'] = \$object->" . $propertyName . ";";
         }
-        $index = 0;
-        foreach ($hiddenPropertyMap as $className => $propertyNames) {
-            $content[] = "\$this->extractCallbacks[" . ($index++) . "]->__invoke(\$object, \$ret);";
+
+        for ($i = 0; $i < count($hiddenPropertyMap); $i++) {
+            $content[] = "self::\$extract".$i."->__invoke(\$object, \$ret);";
         }
 
         $content[] = "return \$ret;";
 
-        return \implode("\n", \array_map(
-            function ($line) {
-                return "        " . $line;
-            }, $content
-        ));
+        return $this->dumpLines($content, 8);
     }
 }
