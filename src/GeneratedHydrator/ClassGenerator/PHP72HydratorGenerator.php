@@ -30,7 +30,7 @@ namespace GeneratedHydrator\ClassGenerator;
  * @author Pierre Rineau <pierre.rineau@makina-corpus.com>
  * @license MIT
  */
-class PHP5HydratorGenerator implements HydratorGeneratorInterface
+class PHP72HydratorGenerator implements HydratorGeneratorInterface
 {
     /**
      * Generates an hydrator class
