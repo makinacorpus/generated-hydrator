@@ -60,6 +60,8 @@ class PHP5HydratorGenerator implements HydratorGeneratorInterface
         return <<<EOT
 <?php
 
+declare(strict_types=1);
+
 namespace {$namespace};
 
 use Zend\Hydrator\HydratorInterface;
@@ -105,7 +107,7 @@ EOT;
             $this->findAllInstanceProperties($class->getParentClass() ?: null), // of course PHP is shit.
             \array_values(\array_filter(
                 $class->getProperties(),
-                function (\ReflectionProperty $property) : bool {
+                function (\ReflectionProperty $property): bool {
                     return ! $property->isStatic();
                 }
             ))
