@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace GeneratedHydrator\ClassGenerator;
 
 /**
@@ -36,5 +38,5 @@ interface HydratorGeneratorInterface
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string;
+    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName): string;
 }

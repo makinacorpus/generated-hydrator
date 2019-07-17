@@ -38,7 +38,7 @@ class PHP5HydratorGenerator implements HydratorGeneratorInterface
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName) : string
+    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName): string
     {
         $position = \strrpos($realClassName, '\\');
         $namespace = \substr($realClassName, 0, $position);
