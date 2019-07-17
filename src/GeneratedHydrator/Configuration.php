@@ -21,55 +21,55 @@ declare(strict_types=1);
 namespace GeneratedHydrator;
 
 use GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface;
-use GeneratedHydrator\ClassGenerator\PHP5HydratorGenerator;
+use GeneratedHydrator\ClassGenerator\PHP72HydratorGenerator;
 use GeneratedHydrator\Factory\HydratorFactory;
+use GeneratedHydrator\Strategy\HashNamingStrategy;
+use GeneratedHydrator\Strategy\NamingStrategy;
 
 /**
  * Base configuration class for the generated hydrator - serves as micro disposable DIC/facade
  *
  * @author Marco Pivetta <ocramius@gmail.com>
+ * @author Pierre Rineau <pierre.rineau@makina-corpus.com>
  * @license MIT
  */
-class Configuration
+final class Configuration
 {
     const DEFAULT_GENERATED_CLASS_NAMESPACE = 'GeneratedHydratorGeneratedClass';
+    const DEFAULT_GENERATED_NAME_STRATEGY = 'hash';
 
-    /**
-     * @var string
-     */
-    protected $hydratedClassName;
+    /** @var bool */
+    private $autoGenerateProxies = true;
 
-    /**
-     * @var bool
-     */
-    protected $autoGenerateProxies = true;
+    /** @var ?string */
+    private $generatedClassesAutoloader;
 
-    /**
-     * @var string|null
-     */
-    protected $generatedClassesTargetDir;
+    /** @var ?string */
+    private $generatedClassesNamespace = self::DEFAULT_GENERATED_CLASS_NAMESPACE;
 
-    /**
-     * @var string
-     */
-    protected $generatedClassesNamespace = self::DEFAULT_GENERATED_CLASS_NAMESPACE;
+    /** @var ?string */
+    private $generatedClassesTargetDir;
 
-    /**
-     * @var callable|null
-     */
-    protected $generatedClassesAutoloader;
+    /** @var ?string */
+    private $hydratedClassName;
 
-    /**
-     * @var \GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface|null
-     */
-    protected $hydratorGenerator;
+    /** @var \GeneratedHydrator\ClassGenerator\HydratorGeneratorInterface */
+    private $hydratorGenerator;
+
+    /** @var ?string */
+    private $namespacePrefix;
+
+    /** @var \GeneratedHydrator\Strategy\NamingStrategy */
+    private $namingStrategy;
 
     /**
      * @param string $hydratedClassName
      */
-    public function __construct(string $hydratedClassName)
+    public function __construct(?string $hydratedClassName = null)
     {
-        $this->setHydratedClassName($hydratedClassName);
+        if ($hydratedClassName) {
+            $this->setHydratedClassName($hydratedClassName);
+        }
     }
 
     /**
@@ -78,6 +78,42 @@ class Configuration
     public function createFactory() : HydratorFactory
     {
         return new HydratorFactory($this);
+    }
+
+    /**
+     * @param string $namespacePrefix
+     */
+    public function setNamespacePrefix(string $namespacePrefix)
+    {
+        $this->namespacePrefix = $namespacePrefix;
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getNamespacePrefix()
+    {
+        return $this->namespacePrefix;
+    }
+
+    /**
+     * @param \GeneratedHydrator\Strategy\NamingStrategy $namingStrategy
+     */
+    public function setNamingStrategy(NamingStrategy $namingStrategy)
+    {
+        $this->namingStrategy = $namingStrategy;
+    }
+
+    /**
+     * @return \GeneratedHydrator\Strategy\NamingStrategy
+     */
+    public function getNamingStrategy(): NamingStrategy
+    {
+        if (null === $this->namingStrategy) {
+            $this->namingStrategy = new HashNamingStrategy();
+        }
+
+        return $this->namingStrategy;
     }
 
     /**
@@ -162,7 +198,7 @@ class Configuration
     public function getHydratorGenerator()
     {
         if (null === $this->hydratorGenerator) {
-            $this->hydratorGenerator = new PHP5HydratorGenerator();
+            $this->hydratorGenerator = new PHP72HydratorGenerator();
         }
 
         return $this->hydratorGenerator;
