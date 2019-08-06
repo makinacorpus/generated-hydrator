@@ -26,7 +26,6 @@ use GeneratedHydratorTestAsset\BaseClass;
 use GeneratedHydratorTestAsset\ClassWithByRefMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMagicMethods;
 use GeneratedHydratorTestAsset\ClassWithMixedProperties;
-use Zend\Hydrator\HydratorInterface;
 
 /**
  * Tests for {@see \GeneratedHydrator\ClassGenerator\HydratorGenerator}
@@ -56,10 +55,6 @@ class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
         $generatedReflection = new \ReflectionClass($generatedClassName);
 
         self::assertSame($generatedClassName, $generatedReflection->getName());
-
-        foreach ($this->getExpectedImplementedInterfaces() as $interface) {
-            self::assertTrue($generatedReflection->implementsInterface($interface));
-        }
     }
 
     /**
@@ -73,13 +68,5 @@ class HydratorGeneratorTest extends \PHPUnit_Framework_TestCase
             [ClassWithByRefMagicMethods::class],
             [ClassWithMixedProperties::class],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getExpectedImplementedInterfaces() : array
-    {
-        return [HydratorInterface::class];
     }
 }

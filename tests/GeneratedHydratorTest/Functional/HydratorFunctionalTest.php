@@ -31,7 +31,6 @@ use GeneratedHydratorTestAsset\ClassWithPublicProperties;
 use GeneratedHydratorTestAsset\ClassWithStaticProperties;
 use GeneratedHydratorTestAsset\EmptyClass;
 use GeneratedHydratorTestAsset\HydratedObject;
-use Zend\Hydrator\HydratorInterface;
 
 /**
  * Tests for {@see \GeneratedHydrator\ClassGenerator\HydratorGenerator} produced objects
@@ -50,9 +49,9 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
      */
     public function testHydrator($instance)
     {
-        $reflection  = new \ReflectionClass($instance);
+        $reflection = new \ReflectionClass($instance);
         $initialData = [];
-        $newData     = [];
+        $newData = [];
 
         $this->recursiveFindInitialData($reflection, $instance, $initialData, $newData);
 
@@ -61,21 +60,28 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
         // Hydration and extraction don't guarantee ordering.
         ksort($initialData);
         ksort($newData);
-        $extracted = $generatedClass->extract($instance);
+        $extracted = $generatedClass::extract($instance);
         ksort($extracted);
 
         self::assertSame($initialData, $extracted);
-        self::assertSame($instance, $generatedClass->hydrate($newData, $instance));
+        self::assertSame($instance, $generatedClass::hydrate($newData, $instance));
 
         // Same as upper applies
         $inspectionData = [];
         $this->recursiveFindInspectionData($reflection, $instance, $inspectionData);
         ksort($inspectionData);
-        $extracted = $generatedClass->extract($instance);
+        $extracted = $generatedClass::extract($instance);
         ksort($extracted);
 
         self::assertSame($inspectionData, $newData);
         self::assertSame($inspectionData, $extracted);
+
+        // Same as upper still applies
+        $newInstance = $generatedClass::create($newData);
+        $extracted = $generatedClass::extract($newInstance);
+        ksort($extracted);
+
+        self::assertSame($newData, $extracted);
     }
 
     public function testHydratingNull()
@@ -84,7 +90,7 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
 
         self::assertSame('property0', $instance->getProperty0());
 
-        $this->generateHydrator($instance)->hydrate(['property0' => null], $instance);
+        $this->generateHydrator($instance)::hydrate(['property0' => null], $instance);
 
         self::assertSame(null, $instance->getProperty0());
     }
@@ -174,15 +180,12 @@ class HydratorFunctionalTest extends \PHPUnit_Framework_TestCase
      * Generates a hydrator for the given class name, and retrieves its class name
      *
      * @param object $instance
-     *
-     * @return HydratorInterface
      */
-    private function generateHydrator($instance) : HydratorInterface
+    private function generateHydrator($instance): string
     {
-        $parentClassName    = get_class($instance);
-        $config             = new Configuration($parentClassName);
-        $generatedClass     = $config->createFactory()->getHydratorClass($parentClassName);
+        $parentClassName = \get_class($instance);
+        $config = new Configuration($parentClassName);
 
-        return new $generatedClass;
+        return $config->createFactory()->getHydratorClass($parentClassName);
     }
 }

@@ -29,14 +29,13 @@ namespace GeneratedHydrator\ClassGenerator;
 interface HydratorGeneratorInterface
 {
     /**
-     * Generates an implementation of Zend\Hydrator\HydratorInterface class for
-     * the given target class, as a valid PHP code string
+     * Generates an hydrator class for the given target class, as a valid PHP
+     * code string
      *
      * @param \ReflectionClass $originalClass
      * @param string $realClassName
-     * @param string $originalClassName
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName): string;
+    public function generate(\ReflectionClass $originalClass, string $realClassName): string;
 }

@@ -21,9 +21,6 @@ declare(strict_types=1);
 namespace GeneratedHydrator\ClassGenerator;
 
 /**
- * Generator for highly performing {@see \Zend\Hydrator\HydratorInterface}
- * for objects
- *
  * {@inheritDoc}
  *
  * @author Marco Pivetta <ocramius@gmail.com>
@@ -38,11 +35,30 @@ class PHP72HydratorGenerator implements HydratorGeneratorInterface
      *
      * @return string
      */
-    public function generate(\ReflectionClass $originalClass, string $realClassName, string $originalClassName): string
+    public function generate(\ReflectionClass $originalClass, string $realClassName): string
     {
-        $position = \strrpos($realClassName, '\\');
-        $namespace = \substr($realClassName, 0, $position);
-        $className = \substr($realClassName, $position + 1);
+        if ($position = \strrpos($realClassName, '\\')) {
+            $namespace = \substr($realClassName, 0, $position);
+            $className = \substr($realClassName, $position + 1);
+        } else {
+            $namespace = null;
+            $className = $realClassName;
+        }
+
+        $originalClassName = $originalClass->name;
+        if ($position = \strrpos($originalClassName, '\\')) {
+            $hydratedNamespace = \substr($originalClassName, 0, $position);
+            $hydratedClassName = \substr($originalClassName, $position + 1);
+        } else {
+            $hydratedNamespace = null;
+            $hydratedClassName = $originalClassName;
+        }
+
+        if ($namespace !== $hydratedNamespace) {
+            $use = "\nuse {$originalClassName};\n";
+        } else {
+            $use = '';
+        }
 
         $visiblePropertyMap = [];
         $hiddenPropertyMap = [];
@@ -57,35 +73,75 @@ class PHP72HydratorGenerator implements HydratorGeneratorInterface
             }
         }
 
+        $doUseConstructor = true;
+        if ($method = $originalClass->getConstructor()) {
+            if (!$method->isPublic()) {
+                /** @var \ReflectionParameter $parameter */
+                foreach ($method->getParameters() as $parameter) {
+                    if (!$parameter->isOptional()) {
+                        $doUseConstructor = false;
+                    }
+                }
+            } else {
+                $doUseConstructor = false;
+            }
+        } else {
+            $doUseConstructor = false;
+        }
+
+        $doUseConstructorValue = $doUseConstructor ? "true" : "false";
+
         return <<<EOT
 <?php
 
 declare(strict_types=1);
 
 namespace {$namespace};
-
-use Zend\Hydrator\HydratorInterface;
-
+{$use}
 /**
  * This is a generated hydrator for the {$originalClassName} class
  */
-final class {$className} implements HydratorInterface
+final class {$className}
 {
+    private static \$useConstructor = {$doUseConstructorValue};
+    private static \$reflection;
+
 {$this->createStaticProperties($visiblePropertyMap, $hiddenPropertyMap, $className)}
 
-    public function hydrate(array \$data, \$object)
+    /**
+     * Hydrate given object instance with given data
+     */
+    public static function hydrate(array \$data, {$hydratedClassName} \$object): {$hydratedClassName}
     {
 {$this->createHydrateMethod($visiblePropertyMap, $hiddenPropertyMap, $className)}
     }
 
-    public function extract(\$object)
+    /**
+     * Extract object data as a key-value array whose keys are properties names
+     */
+    public static function extract({$hydratedClassName} \$object): array
     {
 {$this->createExtractMethod($visiblePropertyMap, $hiddenPropertyMap, $className)}
+    }
+
+    /**
+     * Create a new instance and hydate it with given data
+     */
+    public static function create(array \$data): {$hydratedClassName}
+    {
+        if (self::\$useConstructor) {
+            \$object = new {$hydratedClassName}();
+        } else {
+            \$object = (self::\$reflection ?? (
+                self::\$reflection = new \ReflectionClass({$hydratedClassName}::class))
+            )->newInstanceWithoutConstructor();
+        }
+
+        return self::hydrate(\$data, \$object);
     }
 }
 
 {$this->createCallbackInitialization($visiblePropertyMap, $hiddenPropertyMap, $className)}
-
 EOT;
     }
 
@@ -97,9 +153,9 @@ EOT;
      *
      * @return \ReflectionProperty[]
      */
-    private function findAllInstanceProperties(\ReflectionClass $class = null)
+    private function findAllInstanceProperties(\ReflectionClass $class = null): array
     {
-        if (! $class) {
+        if (!$class) {
             return [];
         }
 
