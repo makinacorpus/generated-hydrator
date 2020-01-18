@@ -3,9 +3,24 @@
 GeneratedHydrator is a library about high performance transition of data from
 arrays to objects and from objects to arrays.
 
-This project is forked from https://github.com/Ocramius/GeneratedHydrator all
-credits goes to Marco Pivetta, original author of this library. This project
-will remain API compatible with it.
+This project was forked from
+[ocramius/generated-hydrator](https://github.com/Ocramius/GeneratedHydrator)
+all credits goes to Marco Pivetta, original author of this library.
+This project will remain API compatible with it.
+
+# Status
+
+**Time has passed, and PHP 5.6 is not supported anywhere anymore, as a consequence**
+**this package is not supported anymore**.
+
+Please use [ocramius/generated-hydrator](https://github.com/Ocramius/GeneratedHydrator)
+instead, and if you wish to integrate it with Symfony, please consider using
+[makinacorpus/generated-hydrator-bundle](https://github.com/makinacorpus/generated-hydrator-bundle).
+
+This package may if necessary receive some updates, for bugfixes and
+security fixes.
+
+# Description
 
 Differences are:
 
@@ -25,5 +40,7 @@ and perform equivalently.
 
 ## Version
 
- * 2.0 branch is for php 5.6 and compatible with with ocramius/generated-hydrator until end of 2018
- * master as no releases yet, is php 7.2 only.
+ * **For PHP >= 7.4 please use `ocramius/generated-hydrator` instead**.
+ * 3.0 (master branch) is PHP 7.2 and 7.3 compatible.
+ * 2.x (2.0 branch is for PHP 5.6 and compatible and is now deprecated and unmaintained.
+ * 1.x is deprecated and unmaintained.

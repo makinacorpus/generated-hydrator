@@ -29,6 +29,7 @@
     "require": {
         "php": "~7.2"
     },
+    "abandoned": "ocramius/generated-hydrator",
     "replace": {
         "ocramius/generated-hydrator": "*"
     },
