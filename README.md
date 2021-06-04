@@ -10,6 +10,17 @@ This project will remain API compatible with it.
 
 # Status
 
+Current 4.2.x branch exists only for PHP 8 support.
+
+The only difference compared to upstream [ocramius/generated-hydrator](https://github.com/Ocramius/GeneratedHydrator)
+is that some dependencies constraints have been relaxed in order to support
+installation on PHP 8.
+
+Once https://github.com/Ocramius/GeneratedHydrator/issues/159 will be fixed, this project
+will be abandonned, once again.
+
+# History
+
 **Time has passed, and PHP 5.6 is not supported anywhere anymore, as a consequence**
 **this package is not supported anymore**.
 
